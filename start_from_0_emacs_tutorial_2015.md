@@ -1,6 +1,5 @@
 # 从零开始——Emacs 安装配置使用教程 2015
 
-{:toc max_level=3 }
 
 ## 序|Preface
 
