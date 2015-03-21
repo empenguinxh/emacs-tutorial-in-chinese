@@ -1,7 +1,6 @@
 # 从零开始——Emacs 安装配置使用教程 2015
-@(General)[emacs,installation]
 
-[TOC]
+{:toc max_level=3 }
 
 ## 序|Preface
 
@@ -73,7 +72,7 @@ http://sourceforge.net/projects/emacsbinw64/
 
 打开emacs，同时按下`Ctrl`和`h`，然后键入`t`，阅读新手教程，熟悉界面，基本术语和操作。
 **请不要跳过这一步！**（但不要求熟练掌握）
-本文后面的部分已经假定你阅读了这个教程，所以默认遵循emacs的术语规范。另外，
+本文后面的部分已经假定你阅读了这个教程，所以默认遵循emacs的术语规范。
 
 `C`代表`Ctrl`键。`M`代表`Alt`键。`RET`代表`Enter`键（回车键）。`C-x`代表同时按下`Ctrl`和`x`。`C-x d RET`代表先同时按下`Ctrl`和`x`，再按下`d`，最后再按下`RET`。我在后文的按键描述中，会经常省略最后一步的回车操作。另外，请留意描述所用的英文字母的大小写。
 
@@ -106,6 +105,7 @@ Emacs里的大部分地方都支持自动补全，快捷键是`TAB`。
 接下来，让我们先来了解emacs在哪里寻找配置文档，以及会具体选择哪种格式。
 
 参考[How Emacs Finds Your Init File](https://www.gnu.org/software/emacs/manual/html_node/emacs/Find-Init.html)，了解emacs启动时配置文件的加载规则
+
 1. Emacs会在系统中寻找一个名为HOME的变量，然后拷贝一个副本供自己使用，并在其指定的路径下寻找配置文件
 * 各个平台的默认HOME路径请参考
 [HOME and Startup Directories on MS-Windows](https://www.gnu.org/software/emacs/manual/html_node/emacs/Windows-HOME.html)
@@ -117,13 +117,14 @@ Emacs里的大部分地方都支持自动补全，快捷键是`TAB`。
 `C:\Users\your-user-name\AppData\Roaming`
 
 
-2. 通常，emacs会优先加载`.emacs`，如果找不到，并且存在文件夹`.emacs.d`，会尝试加载其中的`init.el`。如果你在安装emacs那一步没有运行`bin\addpm.exe`，
+2. 通常，emacs会优先加载`.emacs`，如果找不到，并且存在文件夹`.emacs.d`，会尝试加载其中的`init.el`
 
 3. 基于前面的介绍，一个比较好的安装配置方案如下：
  * 将emacs的压缩包解压到某个路径
  * 运行bin路径下的`runemacs.exe`
  * `c-x d ~ RET`，编辑区域左上角的文件路径即emacs的HOME。或者键入`C-h v user-init-file`并查看返回值
- * 在HOME路径下，emacs会自动生成`.emacs.d`文件夹，在该文件夹下新建`init.el`，输入如下代码
+ * 在HOME路径下，emacs会自动生成`.emacs.d`文件夹，如果没有请自己建立
+ * 在该文件夹下新建`init.el`，输入如下代码
 
 	``` lisp
 ;; This file is only for windows 7/8/8.1
@@ -135,7 +136,7 @@ Emacs里的大部分地方都支持自动补全，快捷键是`TAB`。
 (setenv "HOME" "C:/emacs/") ;; you can change this dir to the place you like
 (load "~/.emacs.d/init.el")
     ```
- * 最后一行代码中，`~`代表emacs的HOME路径。由于前面已经重新设定HOME，所以这行代码相当于调用`C:/emacs/.emacs.d/`下的`init.el`。关于`load`命令，后面有详细解释。
+ * 最后一行代码中，`~`代表emacs的HOME路径。由于前面已经重新设定HOME，所以这行代码相当于调用`C:/emacs/.emacs.d/`下的`init.el`。关于`load`命令，后面有详细解释
  * 顺便删掉前面几步中你见到的任何`.emacs`文件，保证emacs利用`init.el`启动
 
 这样做的好处是，除了可以自定义`.emacs.d`所在的路径，还可以方便的备份整个文件夹，因为插件通常会被安装到这个文件夹下。如果需要换到其他电脑甚至平台时，只需要把整个文件夹复制过去，然后类似于上述步骤那样，想办法让真正的`init.el`发挥作用即可。
@@ -272,7 +273,7 @@ emacs一般称“插件”为"package"或者"library"。本质上，它们都提
 下面来谈一个很重要的变量，`load-path`，其变量类别是“列表”，作用范围是“全局变量”。打开emacs，键入`C-h v load-path RET`。如果你是在刚安装完emacs后键入这个命令，得到的返回值应该类似这样：
 
 ```
-("c:/emacs/share/emacs/24.4.91/site-lisp" "c:/emacs/share/emacs/site-lisp" "c:/emacs/share/emacs/24.4.91/lisp" 
+("c:/emacs/share/emacs/24.4.91/site-lisp" "c:/emacs/share/emacs/site-lisp"
 此处省略若干行
 ```
 
@@ -297,7 +298,11 @@ org插件有很多相关插件。假设现在，你想通过elpa安装某个相�
 
 你会在新出现的窗口看到语句`Requires: org-8.0.0, dash-2.5.0`，表明该插件依赖额外的两个插件org和dash。elpa会智能的安装所有依赖插件。注意，尽管你的emacs自带org，elpa还是会选择安装自己的插件源中的版本。所以，最后`load-path`会变为：
 ```
-("c:/emacs/.emacs.d/elpa/bog-0.6.0/" "c:/emacs/.emacs.d/elpa/dash-20150311.2355/" "c:/emacs/.emacs.d/elpa/org-20150316/" "c:/emacs/.emacs.d/lisp" "c:/emacs/share/emacs/24.4.91/site-lisp" 
+("c:/emacs/.emacs.d/elpa/bog-0.6.0/"
+"c:/emacs/.emacs.d/elpa/dash-20150311.2355/"
+ "c:/emacs/.emacs.d/elpa/org-20150316/" 
+ "c:/emacs/.emacs.d/lisp" 
+ "c:/emacs/share/emacs/24.4.91/site-lisp" 
 此处省略若干行
 "c:/emacs/share/emacs/24.4.91/lisp/org"
 此处省略若干行
@@ -336,7 +341,7 @@ org插件有很多相关插件。假设现在，你想通过elpa安装某个相�
 ``` 
 Debugger entered--Lisp error: (error "Required feature `switch-window-autoloads' was not provided")
 require(switch-window-autoloads)
-eval-buffer(#<buffer  *load*-432260> nil "c:/emacs/.emacs.d/lisp/editing-utils/init-switch-window.el" nil t)  ; Reading at buffer position 68
+eval-buffer(#<buffer  *load*-432260> nil "c:/emacs/.emacs.d/lisp/editing-utils/init-switch-window.el" nil t)
 ```
 
 有了前面铺垫的基础，你应该能很好理解错误的原因：应该`load`一个autoloads文档，而不是`require`。定位到出错的文档，把`(require 'switch-window-autoloads)`修改为`(load "switch-window-autoloads")`。注意，根据`require`和`load`的语法规则，我把`switch-window-autoloads`从一个符号（Symbol）改成了一个字符串（String）。
@@ -382,7 +387,7 @@ Debugger entered--Lisp error: (file-error "Cannot open load file" "no such file 
 * 你还需要把org-beta目录下下的`org-contrib\lisp`添加到`load-path`，因为这个目录即前面所说的"contrib directory"。在第一行下面额外添加代码：`(add-to-list 'load-path (expand-file-name "org-beta\\org-contrib\\lisp" user-emacs-directory))`
 * 到这步，你应该可以正常使用emacs了。不过，为了真正的“安装”org-beta，请继续执行下述操作
 * 额外下载并安装[Cygwin](https://cygwin.com/index.html)。参考[Cygwin详解](http://www.crifan.com/files/doc/docbook/cygwin_intro/release/html/cygwin_intro.html)“Cygwin在线安装指南”一节。一定要执行“Cygwin中模块的各种分类”一节提到的操作，即安装Devel这个部分的模块，因为要用到其中的automake模块。记得安装完后配置环境变量
-* 打开emacs，键入`M-x pwd`，返回路径如果不是org-beta所在的那个，就切换过去。具体操作，键入`C-x d ~ RET .emacs.d/org-mode/ RET`。
+* 打开emacs，键入`M-x pwd`，返回路径如果不是org-beta所在的那个，就切换过去。具体操作，键入`C-x d ~ RET .emacs.d/org-mode/ RET`
 * 切换后，再次键入`M-x pwd`，确认路径正确。然后键入`M-! make`。注意，`Alt`和`!`要一起按，即同时键入`Alt`，`Shift`和数字键`1`。make命令源于Cygwin中的automake模块，它会把org-beta的所有核心脚本编译好，然后建立帮助文档的索引
 * 打开emacs，键入`M-x org-version RET`，返回信息中包含的路径如果是org-beta，即表明'shadow'成功
 * 前面几步的操作也适用于编译其他插件
@@ -478,12 +483,12 @@ Debugger entered--Lisp error: (file-error "Cannot open load file" "no such file 
 参考[Export org-mode code block and result with different styles](http://stackoverflow.com/questions/21005885/export-org-mode-code-block-and-result-with-different-styles)
 * 这段代码要求你安装了Latex和Python。推荐使用[TeX Live](https://www.tug.org/texlive/)和[Anaconda](https://store.continuum.io/cshop/anaconda/)。确保Latex安装了minted插件，Python安装了Pygments插件。另外请配置好环境变量
 * Latex有时需要多次编译才能正确导出所有元素。因此会出现三个`xelatex`语句
-* `bibtex`命令可以生成`.bbl`文件，这个文件用来生成参考文献列表。放到中间是因为，它需要借助第一个`xelatex`生成的`.aux`文件，一个临时辅助文件，来实现转换。原理很简单。文献信息存储在格式为bibtex`.bib`文件中。根据不同的文献引用标准和具体的引用条目（由`.aux`提供），`.bib`内的信息在筛选、重组后被放入`.bbl`文件，用来生成最终的文献引用内容
+* `bibtex`命令可以生成`.bbl`文件，这个文件用来生成参考文献列表。放到中间是因为，它需要借助第一个`xelatex`生成的`.aux`文件，一个临时辅助文件，来实现转换。原理很简单。文献信息存储在格式为bibtex的`.bib`文件中。根据不同的文献引用标准和具体的引用条目（由`.aux`提供），`.bib`内的信息在经过筛选、重组后被放入`.bbl`文件，用来生成最终的文献引用内容
 * 因为minted包依赖python，所以latex在编译时需要调用外部程序python。latex觉得这种行为存在风险，默认禁止。`-shell-escape`允许latex运行"shell command"，进而允许调用python
 
-另外，如果你想在org模式下用RefTex来引用文献，有一个插件'ox-bibtex'，它可以在导出到Latex和HTML时自动生成参考文献附录。'ox-bibtex'在org-contrib中。所以如果要启用这个插件，请配合使用org-beta。
+另外，如果你想在org模式下用RefTex来引用文献，有一个插件'ox-bibtex'，它可以在导出到Latex和HTML时自动生成参考文献附录。'ox-bibtex'在org-contrib中。所以如果要启用这个插件，请配合启用org-beta后再加载这个插件。
 用这个插件导出Latex时，如果你遵照前面的配置，应该一切正常。HTML导出功能需要用到[bibtex2html](https://www.lri.fr/~filliatr/bibtex2html/)。许多人在使用这项功能时都会遇到错误`Executing bibtex2html failed`。参考[
-Emacs: unifying citations between html and latex in org-mode](http://w3facility.org/question/emacs-unifying-citations-between-html-and-latex-in-org-mode/)，问题在于不能使用临时文件。这个问题最终也没得到很好解决。下面我给出一个windows8.1+texlive2014使用环境下的解决方案，不保证其他环境也适用。
+Emacs: unifying citations between html and latex in org-mode](http://w3facility.org/question/emacs-unifying-citations-between-html-and-latex-in-org-mode/)，问题在于不能使用临时文件。这个问题最终也没得到很好解决。下面我给出一个windows8.1+texlive 2014使用环境下的解决方案，不保证其他环境也适用。
 
 #### bibtex2html
 
@@ -494,7 +499,7 @@ Emacs: unifying citations between html and latex in org-mode](http://w3facility.
 * 运行cygwin，`cd`到`bibtexdir`
 * 键入`./configure`，等待程序运行完毕
 * 键入`make`，等待程序运行完毕
-* 如果你希望cygwin能在内部调用bibtex2html，再键入`make install`，这回把bibtex2html安装到`cygwin64所在路径\usr\local\bin`
+* 如果你希望cygwin能在内部调用bibtex2html，再键入`make install`，这会把bibtex2html安装到`cygwin64所在路径\usr\local\bin`
 * 现在，`bibtexdir`目录下会出现'bib2bib.exe'，'bibtex2html.exe' ，'aux2bib'
 * 将三个文件拷贝到系统环境变量PATH中的某个路径，确保你在cmd中键入`bibtex2html`可以调用相关`.exe`文件
 * 大功告成
@@ -530,7 +535,9 @@ Emacs: unifying citations between html and latex in org-mode](http://w3facility.
 
 经过以上配置，你的emacs应该已经比较好用了。不过在emacs世界里，此时的你还只是个初入江湖的小虾米。在相当的一段时间内，你会纠结于emacs复杂的按键组合，为千方百计也不能安装好一个小插件而抓狂。我想说，这都是正常现象。在这些痛苦中，你慢慢成长，从读官方文档开始，一点点熟悉elisp，开始欣赏emacs的设计，甚至能自己写一个小插件。于是，你使用emacs越来越顺手，越来越想打造一个独属于自己的配置，最大化你在各个场景下的使用效率。
 
-而我的教程到这里也要告一段落了。我已经把自己所知悉数传授给了你，从这里开始，我们处在同一个起跑线上。但我想，这套教程并不会结束，因为我还有很多承诺没同你兑现呢，比如分析`init.log`，比如讲解org模式。不过，相信你经过前面的学习，已经能靠自己探索emacs中的新事物了。而我，也会逐渐积累自己的使用心得。我想，后续的教程将会如下呈现：我围绕一个具体的使用情景，向你描述我的插件选择，配置和操作习惯。
+而我的教程到这里也要告一段落了。我已经把自己所知悉数传授给了你，从这里开始，我们处在同一个起跑线上。但我想，这套教程并不会结束，因为我还有很多承诺没同你兑现呢，比如分析`init.log`，比如讲解org模式。不过，相信你经过前面的学习，已经能靠依靠自己探索emacs中的大部分事物了。而我，也会逐渐积累自己的使用心得。
+
+我计划如下呈现后续的教程：围绕一个具体的使用情景，我会向你描述我的插件选择，配置和操作习惯。
 
 好了，朋友们，下期再见～
 
