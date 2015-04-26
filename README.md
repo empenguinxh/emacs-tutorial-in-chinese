@@ -1,10 +1,8 @@
 # emacs-tutorial-in-chinese
 
-This is a series of emacs tutorial written in chinese. 
+This is a series of emacs tutorials written in chinese. 
 
-Although if I have written in english, the series might gain more reader. 
-It is the fact that there is such 
-few good chinese tutorial to help starters unlock the power of emacs as soon as possible 
-encourage me to contribute some high quality articles.
+Although if I have written in english the series might gain more popularity,
+the fact which encourages me to contribute these articles is that the existing chinese guide is far from enough to help starters unlock the power of emacs as quickly as possible.
 
-For those who understand chinese, any suggestion is welcome.
+Any suggestion from those who understand chinese is welcome.
